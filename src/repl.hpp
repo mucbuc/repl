@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <istream>
+#include <functional>
 
 namespace om636 {
 struct repl : public std::enable_shared_from_this<repl> {
@@ -20,15 +22,21 @@ public:
     {
     }
 
-    std::thread eval_loop(std::function<void(std::string, std::ostream&, std::function<void()>)> eval)
+    std::thread eval_loop(std::function<void(std::string, std::ostream&, std::function<void()>)> && eval)
     {
-        return std::thread([eval, shared_this = shared_from_this()] {
-            while (true) {
-                eval(read(shared_this->m_is), shared_this->m_os, [shared_this] {
-                    shared_this->m_exit = true;
-                });
-                if (shared_this->m_exit) {
-                    break;
+        return std::thread([eval = std::move(eval), shared_this = shared_from_this()] {
+            while (!shared_this->should_exit()) {
+                auto line = read(shared_this->m_is);
+
+                if (shared_this->m_is.fail() || shared_this->m_is.eof())
+                {
+                    shared_this->exit();
+                }
+                else if (!line.empty())
+                {
+                    eval(std::move(line), shared_this->m_os, [shared_this] {
+                        shared_this->exit();
+                    });
                 }
             }
         });

@@ -1,6 +1,6 @@
 # om636::repl
 
-![Tests](https://github.com/mucbuc/repl/workflows/Tests/badge.svg)
+![Tests](https://github.com/mucbuc/repl/workflows/Test/badge.svg)
 
 A lightweight, thread-safe C++ REPL (Read-Eval-Print Loop) library for building interactive command-line interfaces.
 

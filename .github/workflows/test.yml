@@ -22,6 +22,7 @@ jobs:
 
       - name: Test exit behavior (integration)
         run: |
+          set -e
           cd test
 
           (echo "hello"; echo "world"; echo "test"; echo "exit") | ./build/example_detach > output.txt

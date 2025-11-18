@@ -2,32 +2,32 @@ name: Test
 
 on:
   push:
-    branches: 
-      - main 
+    branches:
+      - main
   pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
   test-native:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Build examples
-      run: |
-        cd test
-        cmake -B build
-        cmake --build build
+      - uses: actions/checkout@v4
 
-    - name: Test exit behavior (integration)
-      run: |
-        cd test
+      - name: Build examples
+        run: |
+          cd test
+          cmake -B build
+          cmake --build build
 
-        (echo "hello"; echo "world"; echo "test"; echo "exit") | timeout 5 ./build/example_detach > output.txt
-        grep -q "hello" output.txt && echo "✓ Processed hello"
-        grep -q "world" output.txt && echo "✓ Processed world"
-        grep -q "test" output.txt && echo "✓ Processed test"
-        grep -q "exit" output.txt && echo "✓ Processed exit"
-        
-        echo "✓ All commands processed - REPL stayed alive until exit"
+      - name: Test exit behavior (integration)
+        run: |
+          cd test
+
+          (echo "hello"; echo "world"; echo "test"; echo "exit") | ./build/example_detach > output.txt
+          grep -q "hello" output.txt && echo "✓ Processed hello"
+          grep -q "world" output.txt && echo "✓ Processed world"
+          grep -q "test" output.txt && echo "✓ Processed test"
+          grep -q "exit" output.txt && echo "✓ Processed exit"
+
+          echo "✓ All commands processed - REPL stayed alive until exit"
